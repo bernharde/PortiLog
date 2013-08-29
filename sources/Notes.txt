@@ -1,0 +1,6 @@
+To allow an Windows.Store Unit Test App to comunicate with the localhost - PortiLog.Service you need to set the isolation level
+
+cmd> Checknetisolation loopbackexempt -a -p=S-1-15-2-2685905665-221594073-725527771-2262118418-4205834872-3998660675-2448449369
+
+to find the correct id of your app you need to look here...
+HKEY_CURRENT_USER\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Mappings\S-1-15-2-2685905665-221594073-725527771-2262118418-4205834872-3998660675-2448449369

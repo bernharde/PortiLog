@@ -67,7 +67,7 @@ namespace PortiLog.Monitor
             if (string.IsNullOrEmpty(filename))
                 return false;
 
-            this.Text = filename;
+            this.Text = filename + " - PortiLog.Monitor";
 
             try
             {

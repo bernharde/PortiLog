@@ -14,6 +14,7 @@ namespace PortiLog.WindowsStore.SampleApp.BackgroundTasks
             Logger.Info("SampleBackgroundTask started");
             Task.Delay(1000).Wait();
             Logger.Info("SampleBackgroundTask finished");
+            // call flush to ensure that all entries are written to the log file
             Logger.Engine.Flush();
         }
     }

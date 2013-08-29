@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
 
@@ -170,6 +171,20 @@ namespace PortiLog.WindowsPhone.SampleApp
             }
         }
 
-        
+        public async void ViewLogFileAsync()
+        {
+            var dbListener = (DbListener)Logger.Engine.DefaultListener;
+            try
+            {
+                await dbListener.PrepareFileAsync();
+                var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(
+                                    dbListener.LogFileName, CreationCollisionOption.OpenIfExists);
+                await Launcher.LaunchFileAsync(storageFile);
+            }
+            catch (Exception ex)
+            {
+                Logger.Info("ShowLogAsync: " + ex.Message);
+            }
+        }
     }
 }

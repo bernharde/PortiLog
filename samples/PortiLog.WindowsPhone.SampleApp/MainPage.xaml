@@ -53,6 +53,7 @@
                 <TextBlock Text="{Binding Path=DumpTestMessage}"/>
                 <Button Content="Write Single Entry With Category" Click="LogSingleEntryWithCategoryButton_Click"/>
                 <Button Content="Write 150 Entries" Click="Log150EntriesButton_Click"/>
+                <Button Content="View log file" Click="ViewLogFileButton_Click"/>
                 <TextBlock Text="UI Listener (ViewModel)"/>
                 <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
                     <TextBox Height="500" IsReadOnly="True" TextWrapping="NoWrap"  Text="{Binding LogData}"  FontFamily="Courier New" FontSize="12" />

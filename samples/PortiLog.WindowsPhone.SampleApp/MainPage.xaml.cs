@@ -43,5 +43,10 @@ namespace PortiLog.WindowsPhone.SampleApp
         {
             ListenerViewModel.Current.StartTestDumpService();
         }
+
+        void ViewLogFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            ListenerViewModel.Current.ViewLogFileAsync();
+        }
     }
 }

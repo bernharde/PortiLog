@@ -1,0 +1,22 @@
+﻿<Page
+    x:Class="PortiLog.WindowsStore.SampleApp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PortiLog.WindowsStore.SampleApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel>
+            <Button Content="Navigate To Dump Service Url" Click="NavigateToDumpServiceUrlButton_Click"/>
+            <TextBlock Text="{Binding Path=DumpServiceUrl}"/>
+            <Button Content="Test Dump Service" Click="TestDumpServiceButton_Click"/>
+            <TextBlock Text="{Binding Path=DumpTestMessage}"/>
+            <Button Content="Write Single Entry With Category" Click="LogSingleEntryWithCategoryButton_Click"/>
+            <Button Content="Write 150 Entries" Click="Log150EntriesButton_Click"/>
+            <TextBlock Text="UI Listener (ViewModel)"/>
+                <TextBox Height="300" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" Text="{Binding LogData}"  FontFamily="Courier New" />
+        </StackPanel>
+    </Grid>
+</Page>

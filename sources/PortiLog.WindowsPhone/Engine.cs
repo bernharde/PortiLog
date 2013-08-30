@@ -44,9 +44,10 @@ namespace PortiLog.WindowsPhone
             var configuration = new Configuration();
             configuration.LoggingEnabled = true;
             configuration.ApplicationName = PhoneUtil.GetAppTitle();
-            var fileListener = new ListenerConfiguration();
-            fileListener.Name = "App";
-            configuration.Listeners.Add(fileListener);
+            var dbListener = new ListenerConfiguration();
+            dbListener.Name = "App";
+            dbListener.Type = typeof(DbListener).AssemblyQualifiedName;
+            configuration.Listeners.Add(dbListener);
             return configuration;
         }
 

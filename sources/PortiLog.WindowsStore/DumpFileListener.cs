@@ -234,8 +234,28 @@ namespace PortiLog.WindowsStore
                 foreach (var dumpFile in dumpFiles)
                 {
                     InternalTrace(Entry.CreateVerbose("DumpAsync dumpFile: " + dumpFile.Name));
-                    var content = await FileIO.ReadTextAsync(dumpFile.File);
-                    await dumpFile.File.DeleteAsync();
+                    string content = null;
+                    try
+                    {
+                        content = await FileIO.ReadTextAsync(dumpFile.File);
+                    }
+                    catch (Exception ex)
+                    {
+                        InternalTrace(Entry.CreateError("DumpAsync ReadTextAsync failed: " + ex.Message));
+                    }
+
+                    try
+                    {
+                        await dumpFile.File.DeleteAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        InternalTrace(Entry.CreateError("DumpAsync DeleteAsync failed: " + ex.Message));
+                    }
+
+                    // nothing todo here?
+                    if (content == null)
+                        continue;
 
                     bool success = false;
                     try
@@ -267,6 +287,10 @@ namespace PortiLog.WindowsStore
                         return;
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                InternalTrace(Entry.CreateError("DumpAsync failed: " + ex.Message));
             }
             finally
             {

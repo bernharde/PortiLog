@@ -42,6 +42,7 @@ namespace PortiLog.WindowsStore
             configuration.ApplicationName = StoreUtil.GetAppName();
             var fileListener = new ListenerConfiguration();
             fileListener.Name = "App";
+            fileListener.Type = typeof(FileListener).AssemblyQualifiedName;
             configuration.Listeners.Add(fileListener);
             return configuration;
         }

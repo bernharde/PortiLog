@@ -36,16 +36,52 @@ namespace PortiLog
             WriteEntry(new Entry() { Level = Level.Critical, Message = message });
         }
 
-        public abstract ListenerBase DefaultListener { get; }
+        public virtual T FindListener<T>() where T: ListenerBase
+        {
+            foreach (var listener in _listeners)
+            {
+                var found = listener as T;
+                if (found != null)
+                    return found;
+            }
+            return default(T);
+        }
 
         List<ListenerBase> _listeners = new List<ListenerBase>();
 
         System.Threading.SemaphoreSlim semaphoreSlim = new System.Threading.SemaphoreSlim(1);
 
-        public abstract Task DumpAsync();
+        public virtual async Task DumpAsync()
+        {
+            foreach (var listener in _listeners)
+            {
+                if(listener.DumpSupported)
+                {
+                    await listener.DumpAsync();
+                }
+            }
+        }
 
-
-        public abstract Task DumpServiceTestAsync();
+        public virtual async Task DumpServiceTestAsync()
+        {
+            foreach (var listener in RegisteredListeners)
+            {
+                if (listener.DumpSupported)
+                {
+                    var entries = new List<Entry>();
+                    entries.Add(new Entry() { Category = "DumpServiceTest", Level = Level.Verbose, Message = "Dump Service Test Entry" });
+                    await listener.DumpEntriesAsync(entries);
+                }
+            }
+        }
+        
+        public ListenerBase[] RegisteredListeners
+        {
+            get
+            {
+                return _listeners.ToArray();
+            }
+        }
 
         public virtual void RegisterListener(ListenerBase listener)
         {
@@ -163,7 +199,102 @@ namespace PortiLog
             set { _configurationRead = value; }
         }
 
-        public abstract Task<Configuration> GetConfigurationAsync();
+        Configuration _configuration;
+
+        SemaphoreSlim _configurationSlim = new SemaphoreSlim(1);
+
+        public async Task<Configuration> GetConfigurationAsync()
+        {
+            if (!ConfigurationRead)
+                await ConfigureAsync();
+            return _configuration;
+        }
+
+        public async Task ConfigureAsync()
+        {
+            _configurationSlim.Wait();
+
+            if (!ConfigurationRead)
+            {
+                string xml = null;
+
+                Configuration configuration = null;
+
+                try
+                {
+                    xml = await LoadConfigurationFromFileAsync();
+                }
+                catch (Exception ex)
+                {
+                    InternalTrace(Entry.CreateError("LoadConfigurationFromFileAsync failed: " + ex.Message));
+                }
+
+                try
+                {
+                    configuration = Util.FromXml<Configuration>(xml);
+                }
+                catch (Exception ex)
+                {
+                    InternalTrace(Entry.CreateError("PortiLog config file has an invalid format: " + ex.Message));
+                }
+
+                if (configuration == null)
+                {
+                    InternalTrace(Entry.CreateInfo("PortiLog config file not available! Default configuration is created"));
+                    configuration = CreateDefaultConfiguration();
+                }
+
+                this.Configure(configuration);
+            }
+
+            _configurationSlim.Release();
+        }
+
+        public virtual void Configure(Configuration configuration)
+        {
+            _configuration = configuration;
+            ConfigurationRead = true;
+
+            try
+            {
+
+                // unregister all listeners configured through this method
+                var listeners = _listeners.ToArray();
+                foreach (var listener in listeners)
+                {
+                    if (listener.Configured)
+                        UnregisterListener(listener);
+                }
+
+                var baseType = this.GetType();
+
+                foreach (var listenerConfiguration in configuration.Listeners)
+                {
+                    string typeName = listenerConfiguration.Type;
+                    if (string.IsNullOrEmpty(typeName))
+                        throw new ArgumentNullException("Configuration is invalid. Listener Type property cannot be null or emtpy");
+
+                    // check if the type name contains the full qualified name
+                    var fullyTypeName = Util.BuildFullyQualifiedName(baseType, typeName);
+                    var listenerType = Type.GetType(fullyTypeName, false);
+                    if (listenerType == null)
+                        throw new ArgumentException("Listener type cannot be found! type: " + fullyTypeName);
+
+                    var listener = (ListenerBase)Activator.CreateInstance(listenerType, listenerConfiguration.Name);
+                    listener.Configuration = listenerConfiguration;
+                    listener.Configured = true;
+                    RegisterListener(listener);
+                }
+            }
+            catch (Exception ex)
+            {
+                InternalTrace(Entry.CreateError("Configure failed: " + ex.Message));
+            }
+        }
+
+        public abstract Configuration CreateDefaultConfiguration();
+
+        public abstract Task<string> LoadConfigurationFromFileAsync();
 
         public abstract Task<DumpMetaData> GetDumpMetaDataAsync();
 

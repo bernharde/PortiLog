@@ -215,12 +215,12 @@ namespace PortiLog.WindowsStore
 
         SemaphoreSlim _dumpWorkerSlim = new SemaphoreSlim(1);
 
-        public async Task DumpAsync()
+        public override async Task DumpAsync()
         {
             _dumpWorkerSlim.Wait();
             try
             {
-                var service = await CheckDumperAsync();
+                var service = GetService();
                 if (service == null)
                     return;
 
@@ -275,47 +275,6 @@ namespace PortiLog.WindowsStore
             }
         }
 
-        public async Task DumpEntriesAsync(IService service, List<Entry> entries)
-        {
-            var engine = this.Engine;
-            if (engine != null)
-            {
-                var dumpData = await engine.CreateDumpDataAsync();
-                dumpData.Entries = entries;
 
-                await Task.Factory.FromAsync(service.BeginDump,
-                                                   service.EndDump,
-                                                   dumpData, null);
-            }
-        }
-
-        bool _neverDump;
-
-        public override void UpdateConfiguration()
-        {
-            _service = null;
-            _neverDump = false;
-        }
-
-        IService _service;
-
-        public async Task<IService> CheckDumperAsync()
-        {
-            if (_service != null)
-                return _service;
-
-            if (_neverDump)
-                return null;
-
-            var configuration = await GetConfigurationAsync();
-            if (string.IsNullOrEmpty(configuration.ServiceUrl))
-            {
-                _neverDump = true;
-                return null;
-            }
-
-            _service = ServiceClient.CreateChannel(configuration.ServiceUrl);
-            return _service;
-        }
     }
 }

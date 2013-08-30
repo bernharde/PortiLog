@@ -19,6 +19,8 @@ namespace PortiLog
             get { return _name; }
         }
 
+        internal bool Configured { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the listener
         /// </summary>
@@ -35,47 +37,75 @@ namespace PortiLog
 
         public EngineBase Engine
         {
-            get 
+            get
             {
-                return _engine; 
+                return _engine;
             }
-            internal set 
-            { 
-                _engine = value; 
+            internal set
+            {
+                _engine = value;
             }
         }
 
         ListenerConfiguration _configuration;
-        bool _configurationRead;
 
-        public async Task<ListenerConfiguration> GetConfigurationAsync()
+        public ListenerConfiguration Configuration
         {
-            if (!_configurationRead)
-            {
-                var engine = Engine;
-                if (engine != null)
-                {
-                    var config = await Engine.GetConfigurationAsync();
-                    _configuration = config.Listeners.FirstOrDefault(l => l.Name == Name);
-                }
-
-                // if config is not there use default
-                if (_configuration == null)
-                    _configuration = new ListenerConfiguration();
-
-                _configurationRead = true;
+            get 
+            { 
+                return _configuration; 
             }
-            return _configuration;
+            set 
+            { 
+                _configuration = value;
+                Reset();
+            }
         }
 
-        public virtual void UpdateConfiguration()
+        ListenerConfiguration _defaultConfiguration;
+
+        protected virtual ListenerConfiguration GetConfiguration()
         {
-            
+            if (Configuration == null)
+            {
+                if (_defaultConfiguration == null)
+                    _defaultConfiguration = CreateDefaultConfiguration();
+                return _defaultConfiguration;
+            }
+            else
+                return Configuration;
+        }
+
+
+        public virtual ListenerConfiguration CreateDefaultConfiguration()
+        {
+            _defaultConfiguration = new ListenerConfiguration();
+            return _defaultConfiguration;
+        }
+
+        public virtual void Reset()
+        {
+            _neverDump = false;
+            _service = null;
+        }
+
+        public virtual bool DumpSupported
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual async Task DumpAsync()
+        {
+            await Task.Delay(0);
+            throw new NotSupportedException("DumpAsync is not supported");
         }
 
         public virtual async Task UpdateAsync(List<Entry> entries)
         {
-            var configuration = await GetConfigurationAsync();
+            var configuration = GetConfiguration();
 
             List<Entry> writingEntries = new List<Entry>();
             // check and write all entries
@@ -108,6 +138,58 @@ namespace PortiLog
             {
                 engine.InternalTrace(entry);
             }
+        }
+
+        public virtual async Task DumpEntriesAsync(List<Entry> entries)
+        {
+            if(!DumpSupported)
+                throw new NotSupportedException("listener cannot dump");
+            var service = GetService();
+            await DumpEntriesAsync(service, entries);
+        }
+
+        protected virtual async Task DumpEntriesAsync(IService service, List<Entry> entries)
+        {
+            var engine = this.Engine;
+            if (engine != null)
+            {
+                var dumpData = await engine.CreateDumpDataAsync();
+                dumpData.Entries = entries;
+
+                await Task.Factory.FromAsync(service.BeginDump,
+                                                   service.EndDump,
+                                                   dumpData, null);
+            }
+        }
+
+        bool _neverDump;
+
+        protected bool NeverDump
+        {
+            get { return _neverDump; }
+            set { _neverDump = value; }
+        }
+
+        IService _service;
+
+        public IService GetService()
+        {
+            if (_service != null)
+                return _service;
+
+            if (_neverDump)
+                return null;
+
+            var configuration = GetConfiguration();
+
+            if (string.IsNullOrEmpty(configuration.ServiceUrl))
+            {
+                _neverDump = true;
+                return null;
+            }
+
+            _service = ServiceClient.CreateChannel(configuration.ServiceUrl);
+            return _service;
         }
     }
 }

@@ -87,7 +87,7 @@ namespace PortiLog.WindowsPhone
                             
                         }
 
-                        if (!_neverDump && _dumpTask == null)
+                        if (!NeverDump && _dumpTask == null)
                             _dumpTask = Task.Run(() => DumpAsync());
                     }
                     catch (Exception ex)
@@ -110,18 +110,18 @@ namespace PortiLog.WindowsPhone
 
         Task _dumpTask;
         
-        static bool _neverDump;
+        
 
         static SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
         //[DebuggerStepThrough]
-        public async Task DumpAsync()
+        public async override Task DumpAsync()
         {
             try
             {
                 await _semaphore.WaitAsync();
 
-                var service = await CheckDumperAsync();
+                var service = GetService();
                 if (service == null)
                     return;
 
@@ -201,34 +201,6 @@ namespace PortiLog.WindowsPhone
                                                    service.EndDump,
                                                    dumpData, null);
             }
-        }
-
-        public override void UpdateConfiguration()
-        {
-            _neverDump = false;
-            _service = null;
-        }
-
-        IService _service;
-
-        public async Task<IService> CheckDumperAsync()
-        {
-            if (_service != null)
-                return _service;
-
-            if (_neverDump)
-                return null;
-
-            var configuration = await GetConfigurationAsync();
-
-            if (string.IsNullOrEmpty(configuration.ServiceUrl))
-            {
-                _neverDump = true;
-                return null;
-            }
-
-            _service = ServiceClient.CreateChannel(configuration.ServiceUrl);
-            return _service;
         }
 
         public async Task PrepareFileAsync()

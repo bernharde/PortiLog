@@ -10,33 +10,9 @@ namespace PortiLog.WindowsStore
 {
     public class Engine : EngineBase
     {
-        FileListener _defaultListener;
-
-        public override ListenerBase DefaultListener
-        {
-            get 
-            {
-                return _defaultListener; 
-            }
-        }
-
-        DumpFileListener _dumpListener;
-
-        public DumpFileListener DumpListener
-        {
-            get { return _dumpListener; }
-        }
-
         public Engine()
         {
-            _defaultListener = new FileListener("App");
-            RegisterListener(_defaultListener);
-
-            _dumpListener = new DumpFileListener("DumpListener");
-            RegisterListener(_dumpListener);
         }
-
-
 
         DumpMetaData _dumpMetaData;
 
@@ -53,53 +29,30 @@ namespace PortiLog.WindowsStore
             return _dumpMetaData;
         }
 
-        Configuration _configuration;
-
-        SemaphoreSlim _configurationSlim = new SemaphoreSlim(1);
-
-        public override async Task<Configuration> GetConfigurationAsync()
+        public override async Task<string> LoadConfigurationFromFileAsync()
         {
-            if (!ConfigurationRead)
-            {
-                _configurationSlim.Wait();
-
-                if (!ConfigurationRead)
-                {
-                    var xml = await StoreUtil.LoadFromAppFolderAsync("PortiLog.Config.xml");
-                    try
-                    {
-                        _configuration = Util.FromXml<Configuration>(xml);
-                    }
-                    catch (Exception ex)
-                    {
-                        InternalTrace(Entry.CreateError("PortiLog.Config.xml has an invalid format: " + ex.Message));
-                    }
-                    if (_configuration == null)
-                    {
-                        InternalTrace(Entry.CreateInfo("PortiLog.Config.xml not available! Default configuration used"));
-                        _configuration = new Configuration();
-                    }
-                    ConfigurationRead = true;
-                }
-
-                _configurationSlim.Release();
-            }
-            return _configuration;
+            var xml = await StoreUtil.LoadFromAppFolderAsync("PortiLog.Config.xml");
+            return xml;
         }
 
-        public override async Task DumpServiceTestAsync()
+        public override Configuration CreateDefaultConfiguration()
         {
-            var listener = this.DumpListener;
-            var service = await listener.CheckDumperAsync();
-            var entries = new List<Entry>();
-            entries.Add(new Entry() { Category = "DumpServiceTest", Level = Level.Verbose, Message = "Dump Service Test Entry" });
-            await listener.DumpEntriesAsync(service, entries);
+            var configuration = new Configuration();
+            configuration.LoggingEnabled = true;
+            configuration.ApplicationName = StoreUtil.GetAppName();
+            var fileListener = new ListenerConfiguration();
+            fileListener.Name = "App";
+            configuration.Listeners.Add(fileListener);
+            return configuration;
         }
 
-        public override async Task DumpAsync()
-        {
-            await this.DumpListener.DumpAsync();
-        }
-
+        //public override async Task DumpServiceTestAsync()
+        //{
+        //    var listener = this.DumpListener;
+        //    var service = listener.CheckDumper();
+        //    var entries = new List<Entry>();
+        //    entries.Add(new Entry() { Category = "DumpServiceTest", Level = Level.Verbose, Message = "Dump Service Test Entry" });
+        //    await listener.DumpEntriesAsync(service, entries);
+        //}
     }
 }

@@ -16,9 +16,17 @@ namespace PortiLog.WindowsPhone.Test
         [TestMethod]
         public async Task Phone_WriteSingleLogEntryAndDump()
         {
-            Logger.Info("test");
-            Logger.Engine.Flush();
-            await Logger.Engine.DumpAsync();
+            try
+            {
+                Logger.Info("test");
+                Logger.Engine.Flush();
+                var listener = Logger.Engine.FindListener<DbListener>();
+                await listener.DumpAsync();
+            }
+            catch (Exception ex)
+            {
+                Assert.IsNotNull(ex, ex.Message + "internal trace: " + Logger.Engine.GetInternalTraceLog());
+            }
         }
 
         [TestMethod]
@@ -33,14 +41,16 @@ namespace PortiLog.WindowsPhone.Test
         }
 
         [TestMethod]
-        public async Task Phone_CategoryFilterTest()
+        public void Phone_CategoryFilterTest()
         {
             var engine = new WindowsPhone.Engine();
             var trace = new TraceListener("Phone_CategoryFilterTest");
             engine.RegisterListener(trace);
 
-            var configuration = await trace.GetConfigurationAsync();
+
+            var configuration = trace.CreateDefaultConfiguration();
             configuration.Categories.Add("Filter1");
+            trace.Configuration = configuration;
             engine.WriteEntry(new Entry() { Category = "Filter1", Message = "Filter1 Message" });
             engine.WriteEntry(new Entry() { Category = "Filter2", Message = "Filter2 Message" });
             engine.Flush();
@@ -50,15 +60,15 @@ namespace PortiLog.WindowsPhone.Test
         }
 
         [TestMethod]
-        public async Task Phone_LevelFilterTest()
+        public void Phone_LevelFilterTest()
         {
             var engine = new WindowsPhone.Engine();
             var trace = new TraceListener("Phone_LevelFilterTest");
             engine.RegisterListener(trace);
 
-            var configuration = await trace.GetConfigurationAsync();
+            var configuration = trace.CreateDefaultConfiguration();
             configuration.StartLevel = Level.Error;
-            trace.UpdateConfiguration();
+            trace.Configuration = configuration;
             engine.WriteEntry(new Entry() { Category = "Filter1", Level = PortiLog.Level.Critical, Message = "Critical Message" });
             engine.WriteEntry(new Entry() { Category = "Filter2", Level = PortiLog.Level.Info, Message = "Info Message" });
             engine.Flush();

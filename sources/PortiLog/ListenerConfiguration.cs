@@ -17,6 +17,14 @@ namespace PortiLog
         [XmlAttribute("name")]
         public string Name { get; set; }
 
+
+        [XmlAttribute("type")]
+        public string Type
+        {
+            get;
+            set;
+        }
+
         [XmlAttribute("startLevel")]
         public Level StartLevel { get; set; }
 

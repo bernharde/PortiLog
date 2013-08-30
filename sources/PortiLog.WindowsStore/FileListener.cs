@@ -28,7 +28,7 @@ namespace PortiLog.WindowsStore
         {
             get
             {
-                return "App.log";
+                return Name + ".log";
             }
         }
 

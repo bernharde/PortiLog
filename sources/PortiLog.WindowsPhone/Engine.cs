@@ -10,17 +10,8 @@ namespace PortiLog.WindowsPhone
 {
     public class Engine : EngineBase
     {
-        DbListener _listener;
-
-        public override ListenerBase DefaultListener
-        {
-            get { return _listener; }
-        }
-
         public Engine()
         {
-            _listener = new DbListener("App");
-            RegisterListener(_listener);
         }
 
         DumpMetaData _dumpMetaData;
@@ -42,48 +33,22 @@ namespace PortiLog.WindowsPhone
             return task;
         }
 
-        Configuration _configuration;
-
-        SemaphoreSlim _configurationSlim = new SemaphoreSlim(1);
-
-        public override async Task<Configuration> GetConfigurationAsync()
+        public override async Task<string> LoadConfigurationFromFileAsync()
         {
-            if (!ConfigurationRead)
-            {
-                _configurationSlim.Wait();
-
-                if (!ConfigurationRead)
-                {
-                    var xml = await PhoneUtil.LoadFromAppFolderAsync("PortiLog.Config.xml");
-                    _configuration = Util.FromXml<Configuration>(xml);
-                    if (_configuration == null)
-                    {
-                        InternalTrace(Entry.CreateInfo("PortiLog.Config.xml not available! Default configuration used"));
-                        _configuration = new Configuration();
-                    }
-                    ConfigurationRead = true;
-                }
-
-                _configurationSlim.Release();
-            }
-            return _configuration;
+            var xml = await PhoneUtil.LoadFromAppFolderAsync("PortiLog.Config.xml");
+            return xml;
         }
 
-        public override async Task DumpServiceTestAsync()
+        public override Configuration CreateDefaultConfiguration()
         {
-            var listener = (DbListener)this.DefaultListener;
-            var service = await listener.CheckDumperAsync();
-            var entries = new List<Entry>();
-            entries.Add(new Entry() { Category = "DumpServiceTest", Level = Level.Verbose, Message = "Dump Service Test Entry"});
-            await listener.DumpEntriesToServiceAsync(service, entries);
+            var configuration = new Configuration();
+            configuration.LoggingEnabled = true;
+            configuration.ApplicationName = PhoneUtil.GetAppTitle();
+            var fileListener = new ListenerConfiguration();
+            fileListener.Name = "App";
+            configuration.Listeners.Add(fileListener);
+            return configuration;
         }
-
-        public override async Task DumpAsync()
-        {
-            var listener = (DbListener)this.DefaultListener;
-            await listener.DumpAsync();
-        }
-
 
         bool _deviceIdRead;
         string _deviceId;

@@ -35,8 +35,9 @@ namespace PortiLog.WindowsStore.SampleApp
         public async void StartInitialize()
         {
             var engine = (WindowsStore.Engine)Logger.Engine;
-            var dbListener = engine.DumpListener;
-            var config = await dbListener.GetConfigurationAsync();
+            await engine.ConfigureAsync();
+            var dbListener = Logger.Engine.FindListener<DumpFileListener>();
+            var config = dbListener.Configuration;
             DumpServiceUrl = config.ServiceUrl;
         }
 

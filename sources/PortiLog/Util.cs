@@ -10,6 +10,40 @@ namespace PortiLog
 {
     public class Util
     {
+        public static bool IsFullyQualifiedName(string typeName)
+        {
+            return typeName.Contains(".");
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// change is the way 
+        /// from typeName = "FileListener"
+        /// and baseType: PortiLog.WindowsStore.Test.UnitTest, PortiLog.WindowsStore.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+        /// to: PortiLog.WindowsStore.Test.FileListener, PortiLog.WindowsStore.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+        /// </remarks>
+        public static string BuildFullyQualifiedName(Type baseType, string typeName)
+        {
+            if (string.IsNullOrEmpty(typeName))
+                throw new ArgumentNullException("typeName cannot be null or empty!");
+
+            // check if is already is a fully
+            if (IsFullyQualifiedName(typeName))
+                return typeName;
+
+            var fully = baseType.AssemblyQualifiedName;
+            var parts = fully.Split(',');
+            var classNameWithNameSpace = parts[0];
+
+            var nameSpaceName = classNameWithNameSpace.Substring(0, classNameWithNameSpace.LastIndexOf(".")+1);
+            var newClassNameWithNameSpace = nameSpaceName + typeName;
+            parts[0] = newClassNameWithNameSpace;
+
+            var newFully = string.Join(",", parts);
+            return newFully;
+        }
+
         public static string RemoveInvalidPathChars(string value)
         {
             StringBuilder validPath = new StringBuilder();

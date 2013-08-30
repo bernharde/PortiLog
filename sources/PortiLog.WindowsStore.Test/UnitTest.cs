@@ -52,14 +52,15 @@ namespace PortiLog.WindowsStore.Test
         }
 
         [TestMethod]
-        public async Task Store_CategoryFilterTest()
+        public void Store_CategoryFilterTest()
         {
             var engine = new WindowsStore.Engine();
             var trace = new TraceListener("Store_CategoryFilterTest");
             engine.RegisterListener(trace);
 
-            var configuration = await trace.GetConfigurationAsync();
+            var configuration = trace.CreateDefaultConfiguration();
             configuration.Categories.Add("Filter1");
+            trace.Configuration = configuration;
             engine.WriteEntry(new Entry() { Category = "Filter1", Message = "Filter1 Message" });
             engine.WriteEntry(new Entry() { Category = "Filter2", Message = "Filter2 Message" });
             engine.Flush();
@@ -69,15 +70,15 @@ namespace PortiLog.WindowsStore.Test
         }
 
         [TestMethod]
-        public async Task Store_LevelFilterTest()
+        public void Store_LevelFilterTest()
         {
             var engine = new WindowsStore.Engine();
             var trace = new TraceListener("Store_LevelFilterTest");
             engine.RegisterListener(trace);
 
-            var configuration = await trace.GetConfigurationAsync();
+            var configuration = trace.CreateDefaultConfiguration();
             configuration.StartLevel = Level.Error;
-            trace.UpdateConfiguration();
+            trace.Configuration = configuration;
 
             engine.WriteEntry(new Entry() { Category = "Filter1", Level = PortiLog.Level.Critical, Message = "Critical Message" });
             engine.WriteEntry(new Entry() { Category = "Filter2", Level = PortiLog.Level.Info, Message = "Info Message" });
@@ -115,12 +116,48 @@ namespace PortiLog.WindowsStore.Test
         }
 
         [TestMethod]
+        public void Store_TypeNameTest()
+        {
+            var type = this.GetType();
+            var name = type.Name;
+            Assert.IsNotNull(name);
+        }
+
+        [TestMethod]
+        public void Store_IsFullyQualifiedNameTest()
+        {
+            var fully = Util.IsFullyQualifiedName("FileListener");
+            var fully2 = Util.IsFullyQualifiedName("PortiLog.WindowsStore.Test.UnitTest, PortiLog.WindowsStore.Test");
+            Assert.IsFalse(fully);
+            Assert.IsTrue(fully2);
+        }
+
+        [TestMethod]
+        public void Store_BuildFullyQualifiedNameTest_Simple()
+        {
+            var type = typeof(WindowsStore.Engine);
+            var fully = Util.BuildFullyQualifiedName(type, "FileListener");
+
+            var foundType = Type.GetType(fully);
+            Assert.IsNotNull(foundType);
+        }
+
+        [TestMethod]
+        public void Store_BuildFullyQualifiedNameTest_Fully()
+        {
+            var type = typeof(WindowsStore.Engine);
+            var fully = Util.BuildFullyQualifiedName(type, "PortiLog.WindowsStore.FileListener, PortiLog.WindowsStore");
+            var foundType = Type.GetType(fully);
+            Assert.IsNotNull(foundType);
+        }
+
+        [TestMethod]
         public async Task Store_CheckConfigurationAsync()
         {
             var engine = (WindowsStore.Engine)Logger.Engine;
             var globalConfig = await engine.GetConfigurationAsync();
-            var dumpListener = engine.DumpListener;
-            var configuration = await dumpListener.GetConfigurationAsync();
+            var dumpListener = engine.FindListener<DumpFileListener>();
+            var configuration = dumpListener.Configuration;
 #if DEBUG
             Assert.IsNotNull(configuration.ServiceUrl);
 #else
@@ -170,7 +207,9 @@ namespace PortiLog.WindowsStore.Test
         [TestMethod]
         public async Task Store_DumpAsync()
         {
-            DumpFileListener l1 = ((WindowsStore.Engine)Logger.Engine).DumpListener;
+            var engine = new Engine();
+            await engine.ConfigureAsync();
+            DumpFileListener l1 = engine.FindListener<DumpFileListener>();
             var folder = await l1.GetFolderAsync();
 
             var entryList = CreateDummyEntryList(100);
@@ -178,7 +217,7 @@ namespace PortiLog.WindowsStore.Test
             await l1.DumpAsync();
             
             var files = await folder.GetFilesAsync();
-            Assert.AreEqual(0, files.Count);
+            Assert.AreEqual(0, files.Count, engine.GetInternalTraceLog());
             return;
         }
 

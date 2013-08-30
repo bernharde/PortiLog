@@ -36,8 +36,9 @@ namespace PortiLog.WindowsPhone.SampleApp
         public async void StartInitialize()
         {
             var engine = (WindowsPhone.Engine)Logger.Engine;
-            var dbListener = (WindowsPhone.DbListener)engine.DefaultListener;
-            var config = await dbListener.GetConfigurationAsync();
+            await engine.ConfigureAsync();
+            var dbListener = engine.FindListener<DbListener>();
+            var config = dbListener.Configuration;
             DumpServiceUrl = config.ServiceUrl;
         }
 
@@ -173,7 +174,7 @@ namespace PortiLog.WindowsPhone.SampleApp
 
         public async void ViewLogFileAsync()
         {
-            var dbListener = (DbListener)Logger.Engine.DefaultListener;
+            var dbListener = Logger.Engine.FindListener<DbListener>();
             try
             {
                 await dbListener.PrepareFileAsync();

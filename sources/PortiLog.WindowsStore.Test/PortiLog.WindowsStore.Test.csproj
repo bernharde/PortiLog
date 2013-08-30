@@ -161,12 +161,12 @@ if "Release"=="$(ConfigurationName)" goto copyrelease
 goto end
 
 :copydebug
-del "$(ProjectDir)PortiLog.Config.xml"
+del "$(ProjectDir)PortiLog.Config.xml" /F
 copy "$(ProjectDir)PortiLog.Config.Debug.xml" "$(ProjectDir)PortiLog.Config.xml"
 goto end
 
 :copyrelease
-del "$(ProjectDir)PortiLog.Config.xml"
+del "$(ProjectDir)PortiLog.Config.xml" /F
 copy "$(ProjectDir)PortiLog.Config.Release.xml" "$(ProjectDir)PortiLog.Config.xml"
 
 :end</PreBuildEvent>

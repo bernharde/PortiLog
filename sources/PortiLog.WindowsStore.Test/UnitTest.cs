@@ -121,7 +121,11 @@ namespace PortiLog.WindowsStore.Test
             var globalConfig = await engine.GetConfigurationAsync();
             var dumpListener = engine.DumpListener;
             var configuration = await dumpListener.GetConfigurationAsync();
+#if DEBUG
             Assert.IsNotNull(configuration.ServiceUrl);
+#else
+            Assert.IsNull(configuration.ServiceUrl);
+#endif
         }
 
         [TestMethod]

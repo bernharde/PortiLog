@@ -119,6 +119,12 @@
     <None Include="PortiLog.WindowsStore.Test_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="PortiLog.Config.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="PortiLog.Config.Release.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Images\UnitTestLogo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -131,7 +137,7 @@
     <Content Include="Images\UnitTestStoreLogo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PortiLog.Config.xml">
+    <Content Include="PortiLog.Config.Debug.xml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
@@ -149,6 +155,22 @@
     <VisualStudioVersion>11.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>if "Debug"=="$(ConfigurationName)" goto copydebug
+if "Release"=="$(ConfigurationName)" goto copyrelease
+goto end
+
+:copydebug
+del "$(ProjectDir)PortiLog.Config.xml"
+copy "$(ProjectDir)PortiLog.Config.Debug.xml" "$(ProjectDir)PortiLog.Config.xml"
+goto end
+
+:copyrelease
+del "$(ProjectDir)PortiLog.Config.xml"
+copy "$(ProjectDir)PortiLog.Config.Release.xml" "$(ProjectDir)PortiLog.Config.xml"
+
+:end</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

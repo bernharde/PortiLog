@@ -36,7 +36,7 @@ namespace PortiLog
             WriteEntry(new Entry() { Level = Level.Critical, Message = message });
         }
 
-        public virtual T FindListener<T>() where T: ListenerBase
+        public virtual T FindListener<T>() where T: class
         {
             foreach (var listener in _listeners)
             {

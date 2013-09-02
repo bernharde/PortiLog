@@ -38,6 +38,7 @@
     </Compile>
     <Compile Include="Configuration.cs" />
     <Compile Include="DumpMetaData.cs" />
+    <Compile Include="IFileListener.cs" />
     <Compile Include="ListenerConfiguration.cs" />
     <Compile Include="ListenerEventArgs.cs" />
     <Compile Include="ServiceClient.cs" />

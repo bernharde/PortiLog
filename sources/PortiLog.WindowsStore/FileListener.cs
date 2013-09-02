@@ -10,7 +10,7 @@ using Windows.System.Threading;
 
 namespace PortiLog.WindowsStore
 {
-    public class FileListener : ListenerBase
+    public class FileListener : ListenerBase, IFileListener
     {
         /// <summary>
         /// Storage file to be used to write logs
@@ -24,12 +24,17 @@ namespace PortiLog.WindowsStore
         /// <summary>
         /// Gets the log file name (without path)
         /// </summary>
-        public string LogFileName
+        public string FileName
         {
             get
             {
                 return Name + ".log";
             }
+        }
+
+        public async Task PrepareFileAsync()
+        {
+            await Task.Delay(0);
         }
 
         /// <summary>
@@ -50,7 +55,7 @@ namespace PortiLog.WindowsStore
         {
             get
             {
-                return System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, LogFileName);
+                return System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, FileName);
             }
         }
 
@@ -84,7 +89,7 @@ namespace PortiLog.WindowsStore
                     if (_storageFile == null)
                     {
                         _storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(
-                            LogFileName, CreationCollisionOption.OpenIfExists);
+                            FileName, CreationCollisionOption.OpenIfExists);
                     }
 
                     List<string> lines = new List<string>();

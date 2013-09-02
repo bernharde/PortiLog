@@ -15,7 +15,7 @@ using System.Windows;
 
 namespace PortiLog.WindowsPhone
 {
-    public class DbListener : ListenerBase
+    public class DbListener : ListenerBase, IFileListener
     {
         int _maxEntryCount = 1000;
 
@@ -33,13 +33,33 @@ namespace PortiLog.WindowsPhone
         /// <summary>
         /// Gets the log file name (without path)
         /// </summary>
-        public string LogFileName
+        public string FileName
         {
             get
             {
                 var title = PhoneUtil.GetAppTitle();
                 var filename = Util.RemoveInvalidPathChars(title);
                 return filename + ".log.txt";
+            }
+        }
+
+        public async Task PrepareFileAsync()
+        {
+            using (var dc = CreateLogDbContext())
+            {
+                StorageFile _storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(FileName, CreationCollisionOption.ReplaceExisting);
+
+                using (var stream = await _storageFile.OpenStreamForWriteAsync())
+                {
+                    using (StreamWriter writer = new StreamWriter(stream))
+                    {
+                        foreach (var entry in dc.Entries)
+                        {
+                            var newFormatedLine = string.Format(_format, entry.Created, entry.Level, entry.Category, entry.Message);
+                            writer.WriteLine(newFormatedLine);
+                        }
+                    }
+                }
             }
         }
 
@@ -200,26 +220,6 @@ namespace PortiLog.WindowsPhone
                 await Task.Factory.FromAsync(service.BeginDump,
                                                    service.EndDump,
                                                    dumpData, null);
-            }
-        }
-
-        public async Task PrepareFileAsync()
-        {
-            using (var dc = CreateLogDbContext())
-            {
-                StorageFile _storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(LogFileName, CreationCollisionOption.ReplaceExisting);
-
-                using (var stream = await _storageFile.OpenStreamForWriteAsync())
-                {
-                    using (StreamWriter writer = new StreamWriter(stream))
-                    {
-                        foreach (var entry in dc.Entries)
-                        {
-                            var newFormatedLine = string.Format(_format, entry.Created, entry.Level, entry.Category, entry.Message);
-                            writer.WriteLine(newFormatedLine);
-                        }
-                    }
-                }
             }
         }
     }

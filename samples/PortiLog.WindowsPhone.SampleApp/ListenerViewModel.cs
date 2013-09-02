@@ -179,7 +179,7 @@ namespace PortiLog.WindowsPhone.SampleApp
             {
                 await dbListener.PrepareFileAsync();
                 var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(
-                                    dbListener.LogFileName, CreationCollisionOption.OpenIfExists);
+                                    dbListener.FileName, CreationCollisionOption.OpenIfExists);
                 await Launcher.LaunchFileAsync(storageFile);
             }
             catch (Exception ex)

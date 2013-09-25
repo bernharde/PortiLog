@@ -170,6 +170,14 @@ namespace PortiLog
             set { _neverDump = value; }
         }
 
+        bool _dumpEnabled = true;
+
+        public bool DumpEnabled
+        {
+            get { return _dumpEnabled; }
+            set { _dumpEnabled = value; }
+        }
+
         IService _service;
 
         public IService GetService()

@@ -107,7 +107,7 @@ namespace PortiLog.WindowsPhone
                             
                         }
 
-                        if (!NeverDump && _dumpTask == null)
+                        if (DumpEnabled && !NeverDump && _dumpTask == null)
                             _dumpTask = Task.Run(() => DumpAsync());
                     }
                     catch (Exception ex)
@@ -129,8 +129,6 @@ namespace PortiLog.WindowsPhone
         }
 
         Task _dumpTask;
-        
-        
 
         static SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
@@ -222,5 +220,6 @@ namespace PortiLog.WindowsPhone
                                                    dumpData, null);
             }
         }
+
     }
 }

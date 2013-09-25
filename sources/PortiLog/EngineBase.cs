@@ -90,6 +90,9 @@ namespace PortiLog
             {
                 listener.Engine = this;
                 _listeners.Add(listener);
+
+                listener.DumpEnabled = DumpEnabled;
+
                 InternalTrace(Entry.CreateInfo(string.Format("Listener '{0}' registered", listener.Name)));
             }
             semaphoreSlim.Release();
@@ -292,6 +295,21 @@ namespace PortiLog
             }
         }
 
+        bool _dumpEnabled = true;
+
+        public bool DumpEnabled
+        {
+            get { return _dumpEnabled; }
+            set 
+            { 
+                _dumpEnabled = value;
+                foreach (var listener in _listeners)
+                {
+                    listener.DumpEnabled = value;
+                }
+            }
+        }
+
         public abstract Configuration CreateDefaultConfiguration();
 
         public abstract Task<string> LoadConfigurationFromFileAsync();
@@ -320,9 +338,16 @@ namespace PortiLog
         {
             DateTime begin = DateTime.Now;
 
-            while (_entriesToWrite > 0)
+            try
             {
-                Task.WaitAll(Task.Delay(50));
+                while (_entriesToWrite > 0)
+                {
+                    Task.WaitAll(Task.Delay(50));
+                }
+            }
+            catch (Exception ex)
+            {
+                InternalTrace(Entry.CreateError("Flush failed: " + ex.Message));
             }
         }
 

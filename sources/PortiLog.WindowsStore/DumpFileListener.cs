@@ -41,6 +41,8 @@ namespace PortiLog.WindowsStore
             get { return _maxDumpEntryCount; }
             set { _maxDumpEntryCount = value; }
         }
+
+        
   
         /// <summary>
         /// Initializes a new instance of the listener
@@ -50,32 +52,27 @@ namespace PortiLog.WindowsStore
         {
         }
 
-        bool _enabled = true;
-
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
-
         public override async Task WriteEntriesAsync(List<Entry> entries)
         {
-            // make five tries, if background workers are accessing the file also - so access could denied sometimes
-            for (int i = 0; i < 5; i++)
+            if (DumpEnabled)
             {
-                try
+                // make five tries, if background workers are accessing the file also - so access could denied sometimes
+                for (int i = 0; i < 5; i++)
                 {
-                    await WriteEntriesWorkflowAsync(entries);
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    string msg = string.Format("DelayedWorker exception: {0}, {1} -> {2}", ex.Message, DateTime.Now, i);
-                    InternalTrace(Entry.CreateError(msg));
-                }
+                    try
+                    {
+                        await WriteEntriesWorkflowAsync(entries);
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        string msg = string.Format("DelayedWorker exception: {0}, {1} -> {2}", ex.Message, DateTime.Now, i);
+                        InternalTrace(Entry.CreateError(msg));
+                    }
 
-                // Writing to the log file was not successful. Wait for a short period and do a retry
-                await Task.Delay(300);
+                    // Writing to the log file was not successful. Wait for a short period and do a retry
+                    await Task.Delay(300);
+                }
             }
         }
 

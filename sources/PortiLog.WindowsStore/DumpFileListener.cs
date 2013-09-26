@@ -54,25 +54,22 @@ namespace PortiLog.WindowsStore
 
         public override async Task WriteEntriesAsync(List<Entry> entries)
         {
-            if (DumpEnabled)
+            // make five tries, if background workers are accessing the file also - so access could denied sometimes
+            for (int i = 0; i < 5; i++)
             {
-                // make five tries, if background workers are accessing the file also - so access could denied sometimes
-                for (int i = 0; i < 5; i++)
+                try
                 {
-                    try
-                    {
-                        await WriteEntriesWorkflowAsync(entries);
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        string msg = string.Format("DelayedWorker exception: {0}, {1} -> {2}", ex.Message, DateTime.Now, i);
-                        InternalTrace(Entry.CreateError(msg));
-                    }
-
-                    // Writing to the log file was not successful. Wait for a short period and do a retry
-                    await Task.Delay(300);
+                    await WriteEntriesWorkflowAsync(entries);
+                    return;
                 }
+                catch (Exception ex)
+                {
+                    string msg = string.Format("DelayedWorker exception: {0}, {1} -> {2}", ex.Message, DateTime.Now, i);
+                    InternalTrace(Entry.CreateError(msg));
+                }
+
+                // Writing to the log file was not successful. Wait for a short period and do a retry
+                await Task.Delay(300);
             }
         }
 
@@ -91,7 +88,7 @@ namespace PortiLog.WindowsStore
 
         void EnsureDumperIsRunning()
         {
-            if (_dumperTask == null)
+            if (DumpEnabled && _dumperTask == null)
                 _dumperTask = Task.Factory.StartNew(async delegate { await DumpAsync(); });
         }
 

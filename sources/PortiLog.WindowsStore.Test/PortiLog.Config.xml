@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0"?>
 <portiLog applicationName="PortiLog.WindowsStore.TestAppName" loggingEnabled="true">
   <listeners>
-    <add name="App" startLevel="Verbose" type="FileListener"/>
+    <add name="App" startLevel="Verbose" type="FileListener" includeExceptionDetails="true"/>
   </listeners>
 </portiLog>

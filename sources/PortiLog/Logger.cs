@@ -60,6 +60,16 @@ namespace PortiLog
             Engine.Error(message);
         }
 
+        public static void Error(string message, Exception exception)
+        {
+            Engine.Error(message, exception);
+        }
+
+        public static void Error(Exception exception)
+        {
+            Engine.Error(exception);
+        }
+
         public static void Critical(string message)
         {
             Engine.Critial(message);
@@ -69,5 +79,7 @@ namespace PortiLog
         {
             Engine.WriteEntry(entry);
         }
+
+
     }
 }

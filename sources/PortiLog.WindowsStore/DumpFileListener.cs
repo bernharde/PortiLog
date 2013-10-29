@@ -175,7 +175,7 @@ namespace PortiLog.WindowsStore
                 if(entry.Category != null)
                     obj["Category"] = JsonValue.CreateStringValue(entry.Category);
                 if(entry.Message != null)
-                    obj["Message"] = JsonValue.CreateStringValue(entry.Message);
+                    obj["Message"] =  JsonValue.CreateStringValue(EntryFormatter.FormatMessage(entry));
                 arr.Add(obj);
             }
 

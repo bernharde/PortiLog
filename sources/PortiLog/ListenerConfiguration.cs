@@ -48,5 +48,11 @@ namespace PortiLog
             }
             set { _categories = value; }
         }
+
+        [XmlAttribute("entryFormatter")]
+        public string EntryFormatterType { get; set; }
+
+        [XmlAttribute("includeExceptionDetails")]
+        public bool IncludeExceptionDetails { get; set; }
     }
 }

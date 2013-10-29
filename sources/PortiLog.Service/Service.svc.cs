@@ -48,7 +48,7 @@ namespace PortiLog.Service
             {
                 semaphore.Wait();
                 string basePath = WebConfigurationManager.AppSettings["Path"];
-                string logFilename = Path.Combine(basePath, Util.RemoveInvalidPathChars(source));
+                string logFilename = Path.Combine(basePath, LogUtil.RemoveInvalidPathChars(source));
 
                 // write log data to file
                 StringBuilder sb = new StringBuilder();

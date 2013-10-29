@@ -28,7 +28,17 @@ namespace PortiLog
 
         public void Error(string message)
         {
-            WriteEntry(new Entry() { Level = Level.Error, Message = message });
+            Error(message, null);
+        }
+
+        public void Error(Exception exception)
+        {
+            Error(null, exception);
+        }
+
+        public void Error(string message, Exception exception)
+        {
+            WriteEntry(new Entry() { Level = Level.Error, Message = message, Exception = exception });
         }
 
         public void Critial(string message)
@@ -234,7 +244,7 @@ namespace PortiLog
 
                 try
                 {
-                    configuration = Util.FromXml<Configuration>(xml);
+                    configuration = LogUtil.FromXml<Configuration>(xml);
                 }
                 catch (Exception ex)
                 {
@@ -269,23 +279,13 @@ namespace PortiLog
                         UnregisterListener(listener);
                 }
 
-                var baseType = this.GetType();
-
                 foreach (var listenerConfiguration in configuration.Listeners)
                 {
-                    string typeName = listenerConfiguration.Type;
-                    if (string.IsNullOrEmpty(typeName))
-                        throw new ArgumentNullException("Configuration is invalid. Listener Type property cannot be null or emtpy");
-
-                    // check if the type name contains the full qualified name
-                    var fullyTypeName = Util.BuildFullyQualifiedName(baseType, typeName);
-                    var listenerType = Type.GetType(fullyTypeName, false);
-                    if (listenerType == null)
-                        throw new ArgumentException("Listener type cannot be found! type: " + fullyTypeName);
-
-                    var listener = (ListenerBase)Activator.CreateInstance(listenerType, listenerConfiguration.Name);
+                    var listener = CreateListenerInstance(listenerConfiguration);
                     listener.Configuration = listenerConfiguration;
+                    listener.EntryFormatter = CreateEntryFormatterInstance(listenerConfiguration);
                     listener.Configured = true;
+
                     RegisterListener(listener);
                 }
             }
@@ -293,6 +293,47 @@ namespace PortiLog
             {
                 InternalTrace(Entry.CreateError("Configure failed: " + ex.Message));
             }
+        }
+
+        ListenerBase CreateListenerInstance(ListenerConfiguration listenerConfiguration)
+        {
+            var baseType = this.GetType();
+            string typeName = listenerConfiguration.Type;
+            if (string.IsNullOrEmpty(typeName))
+                throw new ArgumentNullException("Configuration is invalid. Listener Type property cannot be null or emtpy");
+
+            // check if the type name contains the full qualified name
+            var fullyTypeName = LogUtil.BuildFullyQualifiedName(baseType, typeName);
+            var listenerType = Type.GetType(fullyTypeName, false);
+            if (listenerType == null)
+                throw new ArgumentException("Listener type cannot be found! Type: " + fullyTypeName);
+
+            var listener = (ListenerBase)Activator.CreateInstance(listenerType, listenerConfiguration.Name);
+            return listener;
+        }
+
+        EntryFormatter CreateEntryFormatterInstance(ListenerConfiguration listenerConfiguration)
+        {
+            var baseType = this.GetType();
+            string typeName = listenerConfiguration.EntryFormatterType;
+            EntryFormatter formatter;
+            if (string.IsNullOrEmpty(typeName))
+            {
+                formatter = new EntryFormatter();
+            }
+            else
+            {
+                // check if the type name contains the full qualified name
+                var fullyTypeName = LogUtil.BuildFullyQualifiedName(baseType, typeName);
+                var entryFormatterType = Type.GetType(fullyTypeName, false);
+                if (entryFormatterType == null)
+                    throw new ArgumentException("EntryFormatter type cannot be found! Type: " + fullyTypeName);
+
+                formatter = (EntryFormatter)Activator.CreateInstance(entryFormatterType);
+            }
+
+            formatter.IncludeExceptionDetails = listenerConfiguration.IncludeExceptionDetails;
+            return formatter;
         }
 
         bool _dumpEnabled = true;

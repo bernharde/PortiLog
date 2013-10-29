@@ -199,5 +199,7 @@ namespace PortiLog
             _service = ServiceClient.CreateChannel(configuration.ServiceUrl);
             return _service;
         }
+
+        public EntryFormatter EntryFormatter { get; set; }
     }
 }

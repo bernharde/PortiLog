@@ -126,8 +126,8 @@ namespace PortiLog.WindowsStore.Test
         [TestMethod]
         public void Store_IsFullyQualifiedNameTest()
         {
-            var fully = Util.IsFullyQualifiedName("FileListener");
-            var fully2 = Util.IsFullyQualifiedName("PortiLog.WindowsStore.Test.UnitTest, PortiLog.WindowsStore.Test");
+            var fully = LogUtil.IsFullyQualifiedName("FileListener");
+            var fully2 = LogUtil.IsFullyQualifiedName("PortiLog.WindowsStore.Test.UnitTest, PortiLog.WindowsStore.Test");
             Assert.IsFalse(fully);
             Assert.IsTrue(fully2);
         }
@@ -136,7 +136,7 @@ namespace PortiLog.WindowsStore.Test
         public void Store_BuildFullyQualifiedNameTest_Simple()
         {
             var type = typeof(WindowsStore.Engine);
-            var fully = Util.BuildFullyQualifiedName(type, "FileListener");
+            var fully = LogUtil.BuildFullyQualifiedName(type, "FileListener");
 
             var foundType = Type.GetType(fully);
             Assert.IsNotNull(foundType);
@@ -146,7 +146,7 @@ namespace PortiLog.WindowsStore.Test
         public void Store_BuildFullyQualifiedNameTest_Fully()
         {
             var type = typeof(WindowsStore.Engine);
-            var fully = Util.BuildFullyQualifiedName(type, "PortiLog.WindowsStore.FileListener, PortiLog.WindowsStore");
+            var fully = LogUtil.BuildFullyQualifiedName(type, "PortiLog.WindowsStore.FileListener, PortiLog.WindowsStore");
             var foundType = Type.GetType(fully);
             Assert.IsNotNull(foundType);
         }
@@ -184,7 +184,7 @@ namespace PortiLog.WindowsStore.Test
             l.ServiceUrl = "http://test";
             l.Categories.Add("cat1");
             config.Listeners.Add(l);
-            var xml = Util.ToXml(config);
+            var xml = LogUtil.ToXml(config);
             return;
             //Assert.IsNotNull(computerName);
         }

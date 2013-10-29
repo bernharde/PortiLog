@@ -38,6 +38,7 @@
     </Compile>
     <Compile Include="Configuration.cs" />
     <Compile Include="DumpMetaData.cs" />
+    <Compile Include="EntryFormatter.cs" />
     <Compile Include="IFileListener.cs" />
     <Compile Include="ListenerConfiguration.cs" />
     <Compile Include="ListenerEventArgs.cs" />
@@ -51,7 +52,7 @@
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TraceListener.cs" />
-    <Compile Include="Util.cs" />
+    <Compile Include="LogUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\ServiceReferences.Designer.ClientConfig" />

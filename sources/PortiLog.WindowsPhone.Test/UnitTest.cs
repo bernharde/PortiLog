@@ -30,6 +30,22 @@ namespace PortiLog.WindowsPhone.Test
         }
 
         [TestMethod]
+        public async Task Phone_WriteSingleErrorEntryAndDump()
+        {
+            try
+            {
+                Logger.Error("test", new Exception("myinnererror"));
+                Logger.Engine.Flush();
+                var listener = Logger.Engine.FindListener<DbListener>();
+                await listener.DumpAsync();
+            }
+            catch (Exception ex)
+            {
+                Assert.IsNotNull(ex, ex.Message + "internal trace: " + Logger.Engine.GetInternalTraceLog());
+            }
+        }
+
+        [TestMethod]
         public async Task Phone_Write1000LogEntryAndDump()
         {
             for (int i = 0; i < 1000; i++)

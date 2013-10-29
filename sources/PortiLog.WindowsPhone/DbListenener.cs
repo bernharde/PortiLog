@@ -38,7 +38,7 @@ namespace PortiLog.WindowsPhone
             get
             {
                 var title = PhoneUtil.GetAppTitle();
-                var filename = Util.RemoveInvalidPathChars(title);
+                var filename = LogUtil.RemoveInvalidPathChars(title);
                 return filename + ".log.txt";
             }
         }
@@ -87,7 +87,7 @@ namespace PortiLog.WindowsPhone
                                     Created = entry.Created,
                                     Category = entry.Category,
                                     Level = entry.Level,
-                                    Message = entry.Message
+                                    Message = EntryFormatter.FormatMessage(entry)
                                 };
 
                                 db.Entries.InsertOnSubmit(dbEntry);
@@ -101,7 +101,28 @@ namespace PortiLog.WindowsPhone
                                 var deleteCount = entryCount - this.MaxEntryCount;
                                 var deleteThem = db.Entries.OrderBy(e => e.DbEntryId).Take(deleteCount).ToList();
                                 db.Entries.DeleteAllOnSubmit(deleteThem);
-                                db.SubmitChanges();
+
+                                try
+                                {
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
+                                }
+                                catch (ChangeConflictException ccex)
+                                {
+                                    InternalTrace(Entry.CreateError(("WriteEntriesAsync conflict ignore: " + ccex.Message)));
+
+                                    // ignore conflicts
+                                    foreach (var conflict in db.ChangeConflicts)
+                                    {
+                                        if (conflict.IsDeleted)
+                                        {
+                                            conflict.Resolve(RefreshMode.KeepCurrentValues);
+                                        }
+                                        else
+                                        {
+                                            conflict.Resolve(RefreshMode.OverwriteCurrentValues);
+                                        }
+                                    }
+                                }
                             }
 
                             
@@ -188,7 +209,19 @@ namespace PortiLog.WindowsPhone
                         catch (ChangeConflictException ccex)
                         {
                             InternalTrace(Entry.CreateError(("StartDumpAsync conflict ignore: " + ccex.Message)));
+
                             // ignore conflicts
+                            foreach (var conflict in db.ChangeConflicts)
+                            {
+                                if (conflict.IsDeleted)
+                                {
+                                    conflict.Resolve(RefreshMode.KeepCurrentValues);
+                                }
+                                else
+                                {
+                                    conflict.Resolve(RefreshMode.OverwriteCurrentValues);
+                                }
+                            }
                         }
 
                         await Task.Delay(500);

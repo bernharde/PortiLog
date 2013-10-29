@@ -95,7 +95,8 @@ namespace PortiLog.WindowsStore
                     List<string> lines = new List<string>();
                     foreach (var entry in entries)
                     {
-                        var line = string.Format(_format, entry.Created, entry.Level, entry.Category, entry.Message);
+                        var message = EntryFormatter.FormatMessage(entry);
+                        var line = string.Format(_format, entry.Created, entry.Level, entry.Category, message);
                         lines.Add(line);
                     }
 

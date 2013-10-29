@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 namespace PortiLog
 {
-    public class Util
+    public class LogUtil
     {
         public static bool IsFullyQualifiedName(string typeName)
         {

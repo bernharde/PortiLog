@@ -76,12 +76,20 @@ namespace PortiLog.WindowsStore
             return result;
         }
 
+        [System.Diagnostics.DebuggerStepThrough]
         public static async Task<string> GetUserNameAsync()
         {
-            string userName = await UserInformation.GetPrincipalNameAsync();
-            if(string.IsNullOrEmpty(userName))
-                userName = await UserInformation.GetDisplayNameAsync();
-            return userName;
+            try
+            {
+                string userName = await UserInformation.GetPrincipalNameAsync();
+                if (string.IsNullOrEmpty(userName))
+                    userName = await UserInformation.GetDisplayNameAsync();
+                return userName;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

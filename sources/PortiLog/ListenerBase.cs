@@ -148,7 +148,7 @@ namespace PortiLog
             await DumpEntriesAsync(service, entries);
         }
 
-        protected virtual async Task DumpEntriesAsync(IService service, List<Entry> entries)
+        protected virtual async Task DumpEntriesAsync(ServiceClient service, List<Entry> entries)
         {
             var engine = this.Engine;
             if (engine != null)
@@ -156,9 +156,7 @@ namespace PortiLog
                 var dumpData = await engine.CreateDumpDataAsync();
                 dumpData.Entries = entries;
 
-                await Task.Factory.FromAsync(service.BeginDump,
-                                                   service.EndDump,
-                                                   dumpData, null);
+                await service.PostDumpData(dumpData);
             }
         }
 
@@ -178,9 +176,9 @@ namespace PortiLog
             set { _dumpEnabled = value; }
         }
 
-        IService _service;
+        ServiceClient _service;
 
-        public IService GetService()
+        public ServiceClient GetService()
         {
             if (_service != null)
                 return _service;
@@ -196,7 +194,7 @@ namespace PortiLog
                 return null;
             }
 
-            _service = ServiceClient.CreateChannel(configuration.ServiceUrl);
+            _service = new ServiceClient(configuration.ServiceUrl);
             return _service;
         }
 

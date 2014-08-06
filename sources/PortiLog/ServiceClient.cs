@@ -1,30 +1,73 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.ServiceModel;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Text;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace PortiLog
 {
     /// <summary>
     /// Defines the client of the move service.
     /// </summary>
-    public static class ServiceClient
+    public class ServiceClient
     {
-        public static IService CreateChannel(string url)
+        const string Token = "/api/logging";
+
+        public string Url { get; set; }
+
+        public ServiceClient(string baseUrl)
         {
-            BasicHttpBinding binding = new BasicHttpBinding();
-            binding.MaxReceivedMessageSize = 2147483647;
-            binding.MaxBufferSize = 2147483647;
+            Url = baseUrl + Token;
+        }
 
-            EndpointAddress endpoint = new EndpointAddress(url);
+        public async Task PostDumpData(DumpData dumpData)
+        {
+            await PostAsync<object, DumpData>(null, dumpData);   
+        }
 
-            ChannelFactory<IService> factory = new ChannelFactory<IService>(binding, endpoint);
+        static async Task<T> JsonDeserializeObjectAsync<T>(string sValue)
+        {
+            var result = await Task.Factory.StartNew<T>(() => { return JsonConvert.DeserializeObject<T>(sValue); });
+            return result;
+        }
 
-            // Create a channel.
-            IService channel = factory.CreateChannel(endpoint);
-            return channel;
+        static async Task<string> JsonSerializeObjectAsync<T>(T value)
+        {
+            var result = await Task.Factory.StartNew<string>(() => { return JsonConvert.SerializeObject(value); });
+            return result;
+        }
+
+        async Task<T> PostAsync<T, PT>(string token, PT tPostData)
+        {
+            var postData = await JsonSerializeObjectAsync(tPostData);
+            var result = await PostAsync<T>(token, postData);
+            return result;
+        }
+
+        async Task<T> PostAsync<T>(string token, string postData)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var decodedUrl = Uri.EscapeUriString(Url);
+                    StringContent postContent = new StringContent(postData, Encoding.UTF8, "application/json");
+                    using (var response = await client.PostAsync(decodedUrl, postContent))
+                    {
+                        response.EnsureSuccessStatusCode();
+                        var content = await response.Content.ReadAsStringAsync();
+                        var value = await JsonDeserializeObjectAsync<T>(content);
+                        return value;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

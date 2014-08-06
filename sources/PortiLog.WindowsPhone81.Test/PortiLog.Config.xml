@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<portiLog applicationName="PortiLog.WindowsPhone.TestAppName" loggingEnabled="true">
+  <listeners>
+    <add name="App" startLevel="Verbose" serviceUrl="http://192.168.178.37/Logging2" type="DbListener" includeExceptionDetails="false"/>
+  </listeners>
+</portiLog>

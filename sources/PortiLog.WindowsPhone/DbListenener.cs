@@ -151,6 +151,14 @@ namespace PortiLog.WindowsPhone
 
         Task _dumpTask;
 
+        public override bool DumpSupported
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         static SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
         //[DebuggerStepThrough]

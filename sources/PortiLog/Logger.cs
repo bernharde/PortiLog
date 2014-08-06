@@ -33,12 +33,15 @@ namespace PortiLog
             EngineBase engine;
 
             Type windowsPhone = Type.GetType("PortiLog.WindowsPhone.Engine, PortiLog.WindowsPhone", false);
+            Type windowsPhone81 = Type.GetType("PortiLog.WindowsPhone81.Engine, PortiLog.WindowsPhone81", false);
             Type windowsStore = Type.GetType("PortiLog.WindowsStore.Engine, PortiLog.WindowsStore", false);
 
             if (windowsPhone != null)
                 engine = (EngineBase)Activator.CreateInstance(windowsPhone);
             else if (windowsStore != null)
                 engine = (EngineBase)Activator.CreateInstance(windowsStore);
+            else if (windowsPhone81 != null)
+                engine = (EngineBase)Activator.CreateInstance(windowsPhone81);
             else
                 throw new Exception("no engine avaiable");
 

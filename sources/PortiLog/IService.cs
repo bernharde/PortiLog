@@ -10,10 +10,10 @@ namespace PortiLog
     /// <summary>
     /// Defines the logging receiver service
     /// </summary>
-    [ServiceContract]
+    //[ServiceContract]
     public interface IService
     {
-        [OperationContract(AsyncPattern = true)]
+        //[OperationContract(AsyncPattern = true)]
         IAsyncResult BeginDump(DumpData dumpData, AsyncCallback callback, Object state);
         void EndDump(IAsyncResult result);
     }

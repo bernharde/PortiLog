@@ -240,7 +240,7 @@ namespace PortiLog.WindowsPhone
             }
         }
 
-        public async Task DumpEntriesToServiceAsync(IService service, List<Entry> entries)
+        public async Task DumpEntriesToServiceAsync(ServiceClient service, List<Entry> entries)
         {
             var engine = this.Engine;
             if (engine != null)
@@ -248,9 +248,7 @@ namespace PortiLog.WindowsPhone
                 var dumpData = await engine.CreateDumpDataAsync();
                 dumpData.Entries = entries;
 
-                await Task.Factory.FromAsync(service.BeginDump,
-                                                   service.EndDump,
-                                                   dumpData, null);
+                await service.PostDumpData(dumpData);
             }
         }
 

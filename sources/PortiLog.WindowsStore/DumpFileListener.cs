@@ -26,6 +26,14 @@ namespace PortiLog.WindowsStore
             public DateTime Created { get { return new DateTime(Ticks); } }
         }
 
+        public override bool DumpSupported
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         int _maxDumpEntryCountPerFile = 30;
 
         public int MaxDumpEntryCountPerFile

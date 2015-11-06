@@ -211,10 +211,10 @@ namespace SQLite
 		
 		static SQLiteConnection ()
 		{
-            //if (!_preserveDuringLinkMagic) {
-            //    var ti = new ColumnInfo ();
-            //    ti.Name = "magic";
-            //}
+			if (_preserveDuringLinkMagic) {
+				var ti = new ColumnInfo ();
+				ti.Name = "magic";
+			}
 		}
 
         public void EnableLoadExtension(int onoff)
@@ -233,6 +233,12 @@ namespace SQLite
 			utf8Length = System.Text.Encoding.UTF8.GetBytes(s, 0, s.Length, bytes, 0);
 			return bytes;
 		}
+		
+		/// <summary>
+		/// Used to list some code that we want the MonoTouch linker
+		/// to see, but that we never want to actually execute.
+		/// </summary>
+		static bool _preserveDuringLinkMagic;
 
 		/// <summary>
 		/// Sets a busy handler to sleep the specified amount of time when a table is locked.

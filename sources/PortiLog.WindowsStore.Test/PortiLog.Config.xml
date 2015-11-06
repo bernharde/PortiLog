@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0"?>
 <portiLog applicationName="PortiLog.WindowsStore.TestAppName" loggingEnabled="true">
   <listeners>
-    <add name="App" startLevel="Verbose" type="FileListener"/>
-    <add name="DumpListener" startLevel="Verbose" serviceUrl="http://192.168.178.37/Logging" type="DumpFileListener"/>
+    <add name="App" startLevel="Verbose" type="FileListener" includeExceptionDetails="true"/>
   </listeners>
 </portiLog>

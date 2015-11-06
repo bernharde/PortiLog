@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30626.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortiLog", "PortiLog\PortiLog.csproj", "{C35190CE-B767-4032-B0C9-1EEB23275DCC}"
 EndProject
@@ -20,8 +20,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortiLog.Service", "PortiLog.Service\PortiLog.Service.csproj", "{E3F5C6B9-6BFA-4B40-A9BC-B8A49C6423C7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortiLog.Service.Tests", "PortiLog.Service.Tests\PortiLog.Service.Tests.csproj", "{2C7153F2-8815-410B-935A-13EC27ABC33A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortiLog.WindowsPhone81", "PortiLog.WindowsPhone81\PortiLog.WindowsPhone81.csproj", "{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -131,24 +129,6 @@ Global
 		{2C7153F2-8815-410B-935A-13EC27ABC33A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2C7153F2-8815-410B-935A-13EC27ABC33A}.Release|x64.ActiveCfg = Release|Any CPU
 		{2C7153F2-8815-410B-935A-13EC27ABC33A}.Release|x86.ActiveCfg = Release|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|ARM.ActiveCfg = Debug|ARM
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|ARM.Build.0 = Debug|ARM
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|x86.ActiveCfg = Debug|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|x86.Build.0 = Debug|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|ARM.ActiveCfg = Release|ARM
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|ARM.Build.0 = Release|ARM
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|Mixed Platforms.Build.0 = Release|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|x64.ActiveCfg = Release|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|x86.ActiveCfg = Release|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

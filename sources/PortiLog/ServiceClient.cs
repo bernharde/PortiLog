@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Text;
-using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Net;
+using System.IO;
 
 namespace PortiLog
 {
@@ -23,7 +23,7 @@ namespace PortiLog
 
         public async Task PostDumpData(DumpData dumpData)
         {
-            await PostAsync<object, DumpData>(null, dumpData);   
+            await PostAsync<DumpData>(null, dumpData);   
         }
 
         static async Task<T> JsonDeserializeObjectAsync<T>(string sValue)
@@ -38,30 +38,36 @@ namespace PortiLog
             return result;
         }
 
-        async Task<T> PostAsync<T, PT>(string token, PT tPostData)
+        async Task PostAsync<PT>(string token, PT tPostData)
         {
             var postData = await JsonSerializeObjectAsync(tPostData);
-            var result = await PostAsync<T>(token, postData);
-            return result;
+            await PostAsync(token, postData);
         }
 
-        async Task<T> PostAsync<T>(string token, string postData)
+        async Task PostAsync(string token, string postData)
         {
             try
             {
-                using (var client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var decodedUrl = Uri.EscapeUriString(Url);
+                var request = (HttpWebRequest) HttpWebRequest.Create(decodedUrl);
+                request.Accept = "application/json";
+                request.ContentType = "application/json";
+                request.Method = "POST";
 
-                    var decodedUrl = Uri.EscapeUriString(Url);
-                    StringContent postContent = new StringContent(postData, Encoding.UTF8, "application/json");
-                    using (var response = await client.PostAsync(decodedUrl, postContent))
-                    {
-                        response.EnsureSuccessStatusCode();
-                        var content = await response.Content.ReadAsStringAsync();
-                        var value = await JsonDeserializeObjectAsync<T>(content);
-                        return value;
-                    }
+                byte[] data = Encoding.UTF8.GetBytes(postData);
+                //request.ContentLength = data.Length;
+
+                using (var requestStream = await Task<Stream>.Factory.FromAsync(request.BeginGetRequestStream, request.EndGetRequestStream, request))
+                {
+                    await requestStream.WriteAsync(data, 0, data.Length);
+                }
+
+                using (var responseObject = await Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request))
+                {
+                    var responseStream = responseObject.GetResponseStream();
+                    var sr = new StreamReader(responseStream);
+                    string received = await sr.ReadToEndAsync();
+                    return;
                 }
             }
             catch (Exception ex)

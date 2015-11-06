@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.Text;
 using System.Net;
 using System.IO;
+using System.Runtime.Serialization.Json;
 
 namespace PortiLog
 {
@@ -21,6 +21,11 @@ namespace PortiLog
             Url = baseUrl + Token;
         }
 
+        public Stream GenerateStreamFromString(string s)
+        {
+            return new MemoryStream(Encoding.UTF8.GetBytes(s));
+        }
+
         public async Task PostDumpData(DumpData dumpData)
         {
             await PostAsync<DumpData>(null, dumpData);   
@@ -28,13 +33,43 @@ namespace PortiLog
 
         static async Task<T> JsonDeserializeObjectAsync<T>(string sValue)
         {
-            var result = await Task.Factory.StartNew<T>(() => { return JsonConvert.DeserializeObject<T>(sValue); });
+            T result = default(T);
+            await Task.Run(() =>
+            {
+                var serializer = new DataContractJsonSerializer(typeof(T));
+                using (var stream = new MemoryStream())
+                {
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        writer.Write(sValue);
+                        writer.Flush();
+                    }
+                    stream.Position = 0;
+                    result = (T)serializer.ReadObject(stream);
+                }
+            });
+
+            //var result = await Task.Factory.StartNew<T>(() => { return JsonConvert.DeserializeObject<T>(sValue); });
             return result;
         }
 
         static async Task<string> JsonSerializeObjectAsync<T>(T value)
         {
-            var result = await Task.Factory.StartNew<string>(() => { return JsonConvert.SerializeObject(value); });
+            string result = null;
+            await Task.Run(() =>
+           {
+               var serializer = new DataContractJsonSerializer(typeof(T));
+               using (var stream = new MemoryStream())
+               {
+                   serializer.WriteObject(stream, value);
+                   stream.Position = 0;
+                   using (var reader = new StreamReader(stream))
+                   {
+                       result = reader.ReadToEnd();
+                   }
+               }
+           });
+            //var result = await Task.Factory.StartNew<string>(() => { return JsonConvert.SerializeObject(value); });
             return result;
         }
 

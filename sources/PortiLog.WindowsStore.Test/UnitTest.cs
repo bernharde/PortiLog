@@ -289,52 +289,7 @@ namespace PortiLog.WindowsStore.Test
         [TestMethod]
         public void Store_JsonTest()
         {
-            //JsonValue jv = new Windows.Data.Json.JsonValue();
             
-            JsonObject o1 = new JsonObject();
-            o1["GuidId"] = JsonValue.CreateStringValue(Guid.NewGuid().ToString());
-            o1["Created"] = JsonValue.CreateNumberValue(DateTime.Now.Ticks);
-            o1["Id"] = JsonValue.CreateNumberValue(0);
-            o1["Level"] = JsonValue.CreateNumberValue((int)Level.Info);
-            o1["Category"] = JsonValue.CreateStringValue("Category1");
-            o1["Message"] = JsonValue.CreateStringValue("my message1");
-            var o1s = o1.Stringify();
-
-            JsonObject o2 = new JsonObject();
-            o2["GuidId"] = JsonValue.CreateStringValue(Guid.NewGuid().ToString());
-            o2["Created"] = JsonValue.CreateNumberValue(DateTime.Now.Ticks);
-            o2["Id"] = JsonValue.CreateNumberValue(0);
-            o2["Level"] = JsonValue.CreateNumberValue((int)Level.Error);
-            o2["Category"] = JsonValue.CreateStringValue("Category2");
-            o2["Message"] = JsonValue.CreateStringValue("my message2");
-            var o2s = o2.Stringify();
-
-            JsonObject o3 = new JsonObject();
-            o3["GuidId"] = JsonValue.CreateStringValue(Guid.NewGuid().ToString());
-            o3["Created"] = JsonValue.CreateNumberValue(DateTime.Now.Ticks);
-            o3["Id"] = JsonValue.CreateNumberValue(0);
-            o3["Level"] = JsonValue.CreateNumberValue((int)Level.Error);
-            o3["Category"] = JsonValue.CreateStringValue("Category3");
-            o3["Message"] = JsonValue.CreateStringValue("my message3");
-            var o3s = o3.Stringify();
-
-            JsonObject o4 = new JsonObject();
-            o4["GuidId"] = JsonValue.CreateStringValue(Guid.NewGuid().ToString());
-            o4["Created"] = JsonValue.CreateNumberValue(DateTime.Now.Ticks);
-            o4["Id"] = JsonValue.CreateNumberValue(0);
-            o4["Level"] = JsonValue.CreateNumberValue((int)Level.Error);
-            o4["Category"] = JsonValue.CreateStringValue("Category4");
-            o4["Message"] = JsonValue.CreateStringValue("my message4");
-            var o4s = o4.Stringify();
-
-            var two = o1s + o2s;
-            var arr = new JsonArray();
-            arr.Add(o1);
-            arr.Add(o2);
-
-            var arrs = arr.Stringify();
-            //JsonValue arr = JsonValue.Parse(two);
-            //var length = arr.Count;
             return;
         }
     }

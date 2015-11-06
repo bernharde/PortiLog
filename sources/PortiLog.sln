@@ -20,10 +20,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortiLog.WindowsPhone.Test"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortiLog.WindowsStore.Test", "PortiLog.WindowsStore.Test\PortiLog.WindowsStore.Test.csproj", "{B896735F-1B2A-45E3-B52E-85C728E590AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortiLog.WindowsPhone81", "PortiLog.WindowsPhone81\PortiLog.WindowsPhone81.csproj", "{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortiLog.WindowsPhone81.Test", "PortiLog.WindowsPhone81.Test\PortiLog.WindowsPhone81.Test.csproj", "{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -142,46 +138,6 @@ Global
 		{B896735F-1B2A-45E3-B52E-85C728E590AE}.Release|x86.ActiveCfg = Release|x86
 		{B896735F-1B2A-45E3-B52E-85C728E590AE}.Release|x86.Build.0 = Release|x86
 		{B896735F-1B2A-45E3-B52E-85C728E590AE}.Release|x86.Deploy.0 = Release|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|ARM.ActiveCfg = Debug|ARM
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|ARM.Build.0 = Debug|ARM
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|x86.ActiveCfg = Debug|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Debug|x86.Build.0 = Debug|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|ARM.ActiveCfg = Release|ARM
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|ARM.Build.0 = Release|ARM
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|Mixed Platforms.Build.0 = Release|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|x64.ActiveCfg = Release|Any CPU
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|x86.ActiveCfg = Release|x86
-		{9D9DE178-EFA3-4332-851C-8DC6C7B0245F}.Release|x86.Build.0 = Release|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Debug|ARM.ActiveCfg = Debug|ARM
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Debug|ARM.Build.0 = Debug|ARM
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Debug|ARM.Deploy.0 = Debug|ARM
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Debug|Mixed Platforms.ActiveCfg = Debug|ARM
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Debug|Mixed Platforms.Build.0 = Debug|ARM
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Debug|Mixed Platforms.Deploy.0 = Debug|ARM
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Debug|x64.ActiveCfg = Debug|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Debug|x86.ActiveCfg = Debug|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Debug|x86.Build.0 = Debug|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Debug|x86.Deploy.0 = Debug|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Release|Any CPU.ActiveCfg = Release|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Release|ARM.ActiveCfg = Release|ARM
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Release|ARM.Build.0 = Release|ARM
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Release|ARM.Deploy.0 = Release|ARM
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Release|Mixed Platforms.Build.0 = Release|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Release|Mixed Platforms.Deploy.0 = Release|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Release|x64.ActiveCfg = Release|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Release|x86.ActiveCfg = Release|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Release|x86.Build.0 = Release|x86
-		{8DEDDC56-D375-4A2C-8C67-86DAB198F1BA}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
